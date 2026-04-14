@@ -7,6 +7,8 @@ use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Exports\ItemsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ItemController extends Controller
 {
@@ -88,11 +90,15 @@ class ItemController extends Controller
     {
         $item = Item::with([
             'lendings' => function ($query) {
-                $query->latest(); 
+                $query->latest();
             },
             'lendings.user'
         ])->findOrFail($id);
 
         return view('items.lending_detail', compact('item'));
+    }
+    public function exportExcel()
+    {
+        return Excel::download(new ItemsExport, 'data-items.xlsx');
     }
 }

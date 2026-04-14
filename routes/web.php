@@ -24,7 +24,7 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
 // --- Admin Group (Hanya Admin) ---
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-
+    Route::get('/admin/items/export', [ItemController::class, 'exportExcel'])->name('admin.items.export');
     // Categories
     Route::prefix('admin/categories')->group(function () {
         Route::get('/', [AdminController::class, 'categories'])->name('admin.categories');

@@ -19,9 +19,10 @@
 
             @if(Auth::user()->role === 'admin')
                 <div class="flex gap-3">
-                    <button class="bg-[#6f42c1] hover:bg-[#59339e] text-white font-medium py-2 px-6 rounded transition">
+                    <a href="{{ route('admin.items.export') }}"
+                        class="bg-[#6f42c1] hover:bg-[#59339e] text-white font-medium py-2 px-6 rounded transition">
                         Export Excel
-                    </button>
+                    </a>
 
                     <a href="{{ route('admin.items.create') }}"
                         class="bg-[#20c997] hover:bg-[#1ba87e] text-white font-medium py-2 px-6 rounded transition flex items-center gap-2">
