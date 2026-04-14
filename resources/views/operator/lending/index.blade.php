@@ -16,9 +16,10 @@
                 <p class="text-gray-500 text-sm mt-1">Data of <span class="text-pink-500">.lendings</span></p>
             </div>
             <div class="flex gap-3">
-                <a href="" {{-- Jika sudah ada rute export --}}
-                    class="bg-[#6f42c1] hover:bg-[#59339e] text-white py-2 px-6 rounded transition">
-                    Export Excel
+                <a href="{{ route('operator.lending.export') }}"
+                    class="bg-[#6f42c1] hover:bg-[#59339e] text-white py-2 px-6 rounded transition flex items-center gap-2">
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span>Export Excel</span>
                 </a>
 
                 <a href="{{ route('operator.lending.create') }}"

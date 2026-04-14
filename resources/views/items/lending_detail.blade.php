@@ -26,6 +26,7 @@
                         <th class="py-4 px-6 text-[#050A30] font-medium">Item</th>
                         <th class="py-4 px-6 text-[#050A30] font-medium text-center">Total</th>
                         <th class="py-4 px-6 text-[#050A30] font-medium">Borrower Name</th>
+                        <th class="py-4 px-6 text-[#050A30] font-medium text-center">Signature</th>
                         <th class="py-4 px-6 text-[#050A30] font-medium">Notes</th>
                         <th class="py-4 px-6 text-[#050A30] font-medium">Date</th>
                         <th class="py-4 px-6 text-[#050A30] font-medium text-center">Status</th>
@@ -38,7 +39,20 @@
                             <td class="py-5 px-6 text-gray-700">{{ $index + 1 }}</td>
                             <td class="py-5 px-6 text-gray-700 font-medium">{{ $item->name }}</td>
                             <td class="py-5 px-6 text-gray-700 text-center">{{ $lending->total }}</td>
-                            <td class="py-5 px-6 text-gray-700">{{ $lending->name }}</td>
+                            <td class="py-5 px-6 text-gray-700 capitalize">{{ $lending->name }}</td>
+
+                            {{-- KOLOM TANDA TANGAN --}}
+                            <td class="py-5 px-6 text-center">
+                                @if($lending->signature)
+                                    <div class="flex justify-center">
+                                        <img src="{{ $lending->signature }}" alt="Tanda Tangan"
+                                            class="h-12 w-auto border border-gray-200 bg-white rounded shadow-sm p-1 hover:scale-150 transition-transform duration-200">
+                                    </div>
+                                @else
+                                    <span class="text-xs text-gray-400 italic">No signature</span>
+                                @endif
+                            </td>
+
                             <td class="py-5 px-6 text-gray-700">{{ $lending->notes ?? '-' }}</td>
                             <td class="py-5 px-6 text-gray-700">
                                 {{ \Carbon\Carbon::parse($lending->date)->format('d F, Y') }}
@@ -60,7 +74,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="py-10 text-center text-gray-400 italic">
+                            <td colspan="9" class="py-10 text-center text-gray-400 italic">
                                 No lending history found for this item.
                             </td>
                         </tr>

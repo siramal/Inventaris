@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,14 +12,15 @@ return new class extends Migration
     {
         Schema::create('lendings', function (Blueprint $table) {
             $table->id();
-            $table->string('item_id'); // Relasi ke tabel items
+            $table->string('item_id');
             $table->integer('total');
-            $table->string('name'); // Nama peminjam
-            $table->text('notes'); // Ket.
+            $table->string('name');   
+            $table->text('notes'); 
             $table->dateTime('date');
-            $table->dateTime('returned_at')->nullable(); // Tanggal kembali
-            $table->string('user_id'); // Penanggung jawab (operator)
+            $table->dateTime('returned_at')->nullable(); 
+            $table->string('user_id'); 
             $table->timestamps();
+            $table->longText('signature')->nullable(); 
         });
     }
 

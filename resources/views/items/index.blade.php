@@ -18,16 +18,27 @@
             </div>
 
             @if(Auth::user()->role === 'admin')
-                <div class="flex gap-3">
-                    <a href="{{ route('admin.items.export') }}"
-                        class="bg-[#6f42c1] hover:bg-[#59339e] text-white font-medium py-2 px-6 rounded transition">
-                        Export Excel
-                    </a>
+                <div class="flex items-end gap-3">
+                    <form action="{{ route('admin.items.export') }}" method="GET" class="flex items-end gap-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase">Start Date</label>
+                            <input type="date" name="start_date"
+                                class="border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-purple-400">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase">End Date</label>
+                            <input type="date" name="end_date"
+                                class="border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-purple-400">
+                        </div>
+                        <button type="submit"
+                            class="bg-[#6f42c1] hover:bg-[#59339e] text-white font-medium py-2 px-4 rounded transition text-sm">
+                            <i class="fa-solid fa-file-excel mr-1"></i> Export Excel
+                        </button>
+                    </form>
 
                     <a href="{{ route('admin.items.create') }}"
-                        class="bg-[#20c997] hover:bg-[#1ba87e] text-white font-medium py-2 px-6 rounded transition flex items-center gap-2">
-                        <i class="fa-solid fa-plus text-xs"></i>
-                        Add
+                        class="bg-[#20c997] hover:bg-[#1ba87e] text-white font-medium py-2 px-6 rounded transition flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-plus text-xs"></i> Add
                     </a>
                 </div>
             @endif
@@ -43,7 +54,6 @@
                         <th class="py-4 px-6 font-medium text-center">Total</th>
                         <th class="py-4 px-6 font-medium text-center">Available</th>
                         <th class="py-4 px-6 font-medium text-center">Lending Total</th>
-                        {{-- Kolom Action hanya muncul untuk Admin --}}
                         @if(Auth::user()->role === 'admin')
                             <th class="py-4 px-6 font-medium text-center">Action</th>
                         @endif
@@ -61,14 +71,12 @@
                             <td class="py-4 px-6 text-gray-700">{{ $item->name }}</td>
                             <td class="py-4 px-6 text-gray-700 text-center">{{ $item->total }}</td>
 
-                            {{-- Kolom Available (Logika gabungan) --}}
                             <td class="py-4 px-6 text-center">
                                 <span class="font-bold {{ $available <= 0 ? 'text-red-500' : 'text-gray-700' }}">
                                     {{ $available }}
                                 </span>
                             </td>
 
-                            {{-- Kolom Lending (Link hanya untuk Admin jika ingin detail) --}}
                             <td class="py-4 px-6 text-center text-gray-700">
                                 @if(Auth::user()->role === 'admin' && $lendingTotal > 0)
                                     <a href="{{ route('admin.items.lending', $item->id) }}"

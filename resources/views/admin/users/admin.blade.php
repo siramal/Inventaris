@@ -53,15 +53,21 @@
                                         class="bg-[#6f42c1] hover:bg-[#59339e] text-white py-1 px-5 rounded text-sm transition shadow-sm">
                                         Edit
                                     </a>
-
-                                    <form action="{{ route('admin.users.admin.destroy', $user->id) }}" method="POST"
-                                        onsubmit="return confirm('Are you sure you want to delete this account?')">
-                                        @csrf
-                                        @method('DELETE') <button type="submit"
-                                            class="bg-[#f56565] hover:bg-[#e53e3e] text-white py-1 px-5 rounded text-sm transition shadow-sm">
-                                            Delete
-                                        </button>
-                                    </form>
+                                    @if ($user->id !== Auth::id())
+                                        <form action="{{ route('admin.users.admin.destroy', $user->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure you want to delete this account?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="bg-[#f56565] hover:bg-[#e53e3e] text-white py-1 px-5 rounded text-sm transition shadow-sm">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="bg-gray-200 text-gray-500 py-1 px-5 rounded text-sm cursor-not-allowed">
+                                            You
+                                        </span>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

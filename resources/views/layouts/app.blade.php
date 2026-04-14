@@ -48,10 +48,11 @@
 
             {{-- Menu Items: Admin & Operator --}}
             @php
-                $itemsRoute = Auth::user()->role === 'admin' ? 'admin.items' : 'operator.items';
+                // Gunakan rute 'shared.items' yang bisa diakses oleh kedua role
+                $itemsRoute = 'shared.items'; 
             @endphp
             <a href="{{ route($itemsRoute) }}"
-                class="flex items-center gap-3 {{ request()->is('*/items*') ? 'bg-blue-800 text-white' : 'text-gray-300 hover:text-white hover:bg-blue-800' }} px-4 py-3 rounded-lg font-medium transition mb-2">
+                class="flex items-center gap-3 {{ request()->is('*/items*') || request()->routeIs('shared.items') ? 'bg-blue-800 text-white' : 'text-gray-300 hover:text-white hover:bg-blue-800' }} px-4 py-3 rounded-lg font-medium transition mb-2">
                 <i class="fa-solid fa-cube w-5 text-center"></i>
                 Items
             </a>
@@ -117,7 +118,6 @@
 
         <main class="flex-1 overflow-y-auto no-scrollbar relative z-20 px-8 pb-8 -mt-24">
             <div class="bg-white rounded-md shadow-lg p-4 flex justify-between items-center mb-6">
-                <p class="text-gray-700 font-medium pl-4">Dashboard > @yield('breadcrumb', 'Home')</p>
 
                 <div class="relative inline-block text-left">
                     <button onclick="toggleDropdown()" class="flex items-center gap-3 focus:outline-none pr-4">

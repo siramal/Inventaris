@@ -13,7 +13,8 @@ class Lending extends Model
         'notes',
         'date',
         'returned_at',
-        'user_id'
+        'user_id',
+        'signature',
     ];
 
     protected $casts = [

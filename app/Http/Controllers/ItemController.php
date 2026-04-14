@@ -97,8 +97,18 @@ class ItemController extends Controller
 
         return view('items.lending_detail', compact('item'));
     }
-    public function exportExcel()
+    public function exportExcel(Request $request)
     {
-        return Excel::download(new ItemsExport, 'data-items.xlsx');
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+
+        $fileName = 'data-items';
+        if ($startDate && $endDate) {
+            $fileName .= "-($startDate-to-$endDate)";
+        }
+        $fileName .= '.xlsx';
+
+        return Excel::download(new ItemsExport($startDate, $endDate), $fileName);
     }
+
 }

@@ -11,20 +11,20 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('lending');
 })->name('landing');
+
 Route::post('/login', [AuthController::class, 'auth'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::middleware(['auth', 'role:operator'])->group(function () {
-    // Tambahkan baris ini!
-    Route::get('/operator/dashboard', [LendingController::class, 'dashboard'])->name('operator.dashboard');
 
-    Route::prefix('operator/lending')->group(function () {
-        // ... rute lending lainnya
-    });
+// --- API Routes (Dibutuhkan untuk Real-time Stock) ---
+Route::middleware(['auth'])->group(function () {
+    Route::get('/api/items/{id}/stock', [ItemController::class, 'getAvailableStock']);
 });
+
 // --- Admin Group (Hanya Admin) ---
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/items/export', [ItemController::class, 'exportExcel'])->name('admin.items.export');
+
     // Categories
     Route::prefix('admin/categories')->group(function () {
         Route::get('/', [AdminController::class, 'categories'])->name('admin.categories');
@@ -43,11 +43,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/admin/items/{id}', [ItemController::class, 'updateItem'])->name('admin.items.update');
     Route::get('/admin/items/{id}/lending', [ItemController::class, 'showLending'])->name('admin.items.lending');
 
-    // User Management (DILENGKAPI)
+    // User Management
     Route::prefix('admin/users')->group(function () {
         // Admin Accounts
         Route::get('/admin', [UserController::class, 'indexAdmin'])->name('admin.users.admin');
-        Route::get('/admin/create', [UserController::class, 'createAdmin'])->name('admin.users.admin.create'); // RUTE INI YANG TADI HILANG
+        Route::get('/admin/create', [UserController::class, 'createAdmin'])->name('admin.users.admin.create');
         Route::post('/admin/store', [UserController::class, 'storeAdmin'])->name('admin.users.admin.store');
         Route::get('/admin/{id}/edit', [UserController::class, 'editAdmin'])->name('admin.users.admin.edit');
         Route::put('/admin/{id}', [UserController::class, 'updateAdmin'])->name('admin.users.admin.update');
@@ -63,12 +63,15 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::patch('/operator/{id}/reset', [UserController::class, 'resetPasswordOperator'])->name('admin.users.operator.reset');
     });
 });
-
 // --- Operator Group (Hanya Operator) ---
 Route::middleware(['auth', 'role:operator'])->group(function () {
     Route::get('/operator/dashboard', [LendingController::class, 'dashboard'])->name('operator.dashboard');
 
     Route::prefix('operator/lending')->group(function () {
+        // TARUH EXPORT DI ATAS rute yang memiliki parameter dinamis (jika ada)
+        // URL: /operator/lending/export
+        Route::get('/export', [LendingController::class, 'exportExcel'])->name('operator.lending.export');
+
         Route::get('/', [LendingController::class, 'index'])->name('operator.lending.index');
         Route::get('/create', [LendingController::class, 'create'])->name('operator.lending.create');
         Route::post('/', [LendingController::class, 'store'])->name('operator.lending.store');
@@ -76,8 +79,8 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
         Route::delete('/{id}', [LendingController::class, 'destroy'])->name('operator.lending.destroy');
     });
 });
-// --- Shared Group (Bisa diakses Admin DAN Operator) ---
+
+// --- Shared Group (Akses Bersama) ---
 Route::middleware(['auth', 'role:admin,operator'])->group(function () {
-    Route::get('/operator/items', [ItemController::class, 'index'])->name('operator.items');
-    Route::get('/items', [ItemController::class, 'index'])->name('shared.items');
+    Route::get('/items/table', [ItemController::class, 'index'])->name('shared.items');
 });
