@@ -10,7 +10,6 @@
                 value.</p>
         </div>
 
-        {{-- ALERT ERROR STOK (Sesuai Gambar) --}}
         @if ($errors->has('total_error'))
             <div class="mb-6 p-4 bg-red-100 border border-red-200 text-red-700 rounded-lg text-lg">
                 {{ $errors->first('total_error') }}
@@ -20,7 +19,6 @@
         <form action="{{ route('operator.lending.store') }}" method="POST">
             @csrf
 
-            {{-- Input Nama Peminjam (Hanya satu kali) --}}
             <div class="mb-6">
                 <label class="block text-gray-700 font-medium mb-2">Name</label>
                 <input type="text" name="name" value="{{ old('name') }}" placeholder="Name"
@@ -29,10 +27,7 @@
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-
-            {{-- Kontainer untuk Items & Total yang Dinamis --}}
             <div id="items-container" class="space-y-4">
-                {{-- Form Default (Index 0) --}}
                 <div class="item-group p-5 border border-gray-200 rounded-lg bg-gray-50 relative">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -54,16 +49,12 @@
                     </div>
                 </div>
             </div>
-
-            {{-- Tombol More --}}
             <div class="mt-4 mb-6">
                 <button type="button" id="add-item-btn"
                     class="text-cyan-500 flex items-center gap-1 text-sm font-medium hover:text-cyan-600 transition">
                     <i class="fa-solid fa-chevron-down text-[10px]"></i> More
                 </button>
             </div>
-
-            {{-- Input Keterangan (Hanya satu kali) --}}
             <div class="mb-8">
                 <label class="block text-gray-700 font-medium mb-2">Ket.</label>
                 <textarea name="notes" rows="4" placeholder="Keterangan peminjaman..."
@@ -72,8 +63,6 @@
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
-
-            {{-- Tombol Submit & Cancel --}}
             <div class="flex gap-3">
                 <button type="submit"
                     class="bg-[#6f42c1] hover:bg-[#59339e] text-white font-bold py-3 px-10 rounded-md transition shadow-md">
@@ -87,19 +76,16 @@
         </form>
     </div>
 
-    {{-- JAVASCRIPT UNTUK DYNAMIC FORM --}}
     <script>
         let itemIndex = 1;
         const container = document.getElementById('items-container');
         const addButton = document.getElementById('add-item-btn');
 
         addButton.addEventListener('click', () => {
-            // Buat elemen div baru
             const newItemDiv = document.createElement('div');
             newItemDiv.className =
                 "item-group p-5 border border-gray-200 rounded-lg bg-gray-50 relative mt-4 animate-fade-in";
 
-            // Isi HTML elemen baru (Gunakan index yang dinamis)
             newItemDiv.innerHTML = `
             <button type="button" class="remove-item-btn absolute top-3 right-3 text-red-500 hover:text-red-700 transition">
                 <i class="fa-solid fa-square-xmark text-xl"></i>
@@ -125,7 +111,6 @@
             itemIndex++;
         });
 
-        // Logika menghapus form saat tombol X diklik
         container.addEventListener('click', (e) => {
             if (e.target.closest('.remove-item-btn')) {
                 const group = e.target.closest('.item-group');

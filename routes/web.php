@@ -20,10 +20,12 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
     Route::prefix('operator/lending')->group(function () {
         // ... rute lending lainnya
     });
-});// --- Admin Group (Hanya Admin) ---
+});
+// --- Admin Group (Hanya Admin) ---
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
+    // Categories
     Route::prefix('admin/categories')->group(function () {
         Route::get('/', [AdminController::class, 'categories'])->name('admin.categories');
         Route::get('/create', [AdminController::class, 'createCategory'])->name('admin.categories.create');
@@ -33,7 +35,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::delete('/{id}', [AdminController::class, 'destroyCategory'])->name('admin.categories.destroy');
     });
 
-    // Items khusus Admin (untuk akses Create/Edit)
+    // Items Admin
     Route::get('/admin/items', [ItemController::class, 'index'])->name('admin.items');
     Route::get('/admin/items/create', [ItemController::class, 'createItem'])->name('admin.items.create');
     Route::post('/admin/items', [ItemController::class, 'storeItem'])->name('admin.items.store');
@@ -41,12 +43,24 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/admin/items/{id}', [ItemController::class, 'updateItem'])->name('admin.items.update');
     Route::get('/admin/items/{id}/lending', [ItemController::class, 'showLending'])->name('admin.items.lending');
 
-    // User Management
+    // User Management (DILENGKAPI)
     Route::prefix('admin/users')->group(function () {
-        // ... rute user management admin & operator ...
+        // Admin Accounts
         Route::get('/admin', [UserController::class, 'indexAdmin'])->name('admin.users.admin');
+        Route::get('/admin/create', [UserController::class, 'createAdmin'])->name('admin.users.admin.create'); // RUTE INI YANG TADI HILANG
+        Route::post('/admin/store', [UserController::class, 'storeAdmin'])->name('admin.users.admin.store');
+        Route::get('/admin/{id}/edit', [UserController::class, 'editAdmin'])->name('admin.users.admin.edit');
+        Route::put('/admin/{id}', [UserController::class, 'updateAdmin'])->name('admin.users.admin.update');
+        Route::delete('/admin/{id}', [UserController::class, 'destroyAdmin'])->name('admin.users.admin.destroy');
+
+        // Operator Accounts
         Route::get('/operator', [UserController::class, 'indexOperator'])->name('admin.users.operator');
-        // (Lanjutkan rute user management lainnya di sini)
+        Route::get('/operator/create', [UserController::class, 'createOperator'])->name('admin.users.operator.create');
+        Route::post('/operator/store', [UserController::class, 'storeOperator'])->name('admin.users.operator.store');
+        Route::get('/operator/{id}/edit', [UserController::class, 'editOperator'])->name('admin.users.operator.edit');
+        Route::put('/operator/{id}', [UserController::class, 'updateOperator'])->name('admin.users.operator.update');
+        Route::delete('/operator/{id}', [UserController::class, 'destroyOperator'])->name('admin.users.operator.destroy');
+        Route::patch('/operator/{id}/reset', [UserController::class, 'resetPasswordOperator'])->name('admin.users.operator.reset');
     });
 });
 

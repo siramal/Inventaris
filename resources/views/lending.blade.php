@@ -185,17 +185,12 @@
             } else {
                 modal.classList.replace('flex', 'hidden');
                 document.body.style.overflow = 'auto';
-
-                // Opsional: Hapus pesan error saat modal ditutup manual
                 window.location.href = "{{ route('landing') }}";
             }
         }
 
-        // Auto-show jika ada error (Server Side Check)
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             @if ($errors->any())
-                // Modal sudah terbuka via class PHP di atas, 
-                // kita hanya pastikan body overflow terkunci.
                 document.body.style.overflow = 'hidden';
             @endif
         });

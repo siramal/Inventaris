@@ -11,12 +11,10 @@ class LendingController extends Controller
 {
     public function dashboard()
     {
-        // Arahkan ke view dashboard operator Anda
         return view('operator.dashboard');
     }
     public function index()
     {
-        // Ambil data dengan eager loading agar tidak berat
         $lendings = Lending::with(['item', 'user'])->orderBy('date', 'desc')->get();
         return view('operator.lending.index', compact('lendings'));
     }
@@ -37,9 +35,6 @@ class LendingController extends Controller
 
         foreach ($request->items as $itemData) {
             $item = Item::find($itemData['item_id']);
-
-            // HITUNG STOK TERSEDIA: Total Barang - Barang Rusak
-            // Gunakan nama kolom 'total' sesuai migration Anda
             $stokTersedia = (int) $item->total - (int) $item->repair;
             $jumlahDipinjam = (int) $itemData['total'];
 
@@ -50,19 +45,18 @@ class LendingController extends Controller
             }
         }
 
-        // Jika aman, lakukan simpan dan kurangi kolom 'total'
         foreach ($request->items as $itemData) {
             Lending::create([
                 'name' => $request->name,
                 'item_id' => $itemData['item_id'],
-                'total' => $itemData['total'], // jumlah yang dipinjam
+                'total' => $itemData['total'], 
                 'notes' => $request->notes,
                 'date' => now(),
                 'user_id' => auth()->id(),
             ]);
 
             $item = Item::find($itemData['item_id']);
-            $item->decrement('total', $itemData['total']); // Kurangi kolom 'total' di tabel items
+            $item->decrement('total', $itemData['total']);
         }
 
         return redirect()->route('operator.lending.index')->with('success', 'Success add new lending!');
@@ -76,17 +70,16 @@ class LendingController extends Controller
     {
         $lending = Lending::findOrFail($id);
 
-        // Pastikan barang belum dikembalikan untuk menghindari double stok
         if ($lending->returned_at) {
             return redirect()->back();
         }
 
-        // 1. Update tanggal pengembalian
+        // Update tanggal pengembalian
         $lending->update([
             'returned_at' => now()
         ]);
 
-        // 2. Tambahkan kembali jumlahnya ke kolom 'total' di tabel items
+        // Tambahkan kembali jumlahnya ke kolom 'total' di tabel items
         $item = Item::find($lending->item_id);
 
         if ($item) {

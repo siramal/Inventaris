@@ -5,7 +5,6 @@
 @section('content')
     <div class="bg-white rounded-md shadow-md p-8 min-h-[400px]">
 
-        {{-- Header: Tombol Add & Export hanya untuk Admin --}}
         <div class="flex justify-between items-start mb-8">
             <div>
                 <h2 class="text-xl font-bold text-[#050A30]">Items Table</h2>

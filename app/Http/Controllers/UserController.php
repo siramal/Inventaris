@@ -10,7 +10,6 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
-    // Menampilkan halaman data Admin
     public function indexAdmin()
     {
         // Mengambil semua user yang memiliki role 'admin'
@@ -25,22 +24,21 @@ class UserController extends Controller
         return view('admin.users.admin_create');
     }
 
-    // Memproses form tambah admin (sementara redirect dulu)
     // Memproses form tambah admin
     public function storeAdmin(Request $request)
     {
-        // 1. Validasi
+        // Validasi
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'role' => 'required|in:admin,operator', // Sesuai enum database
         ]);
 
-        // 2. Generate Password (4 huruf email + 1234)
+        // Generate Password 4 huruf email + 1234
         $emailPrefix = substr($request->email, 0, 4);
         $generatedPassword = $emailPrefix . '1234';
 
-        // 3. Eksekusi Simpan
+        // Simpan
         User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -48,45 +46,36 @@ class UserController extends Controller
             'role' => $request->role,
         ]);
 
-        // 4. Redirect dengan alert password agar admin tahu passwordnya apa
         return redirect()->route('admin.users.admin')->with('success', "Akun berhasil dibuat! Password default: $generatedPassword");
     }
-    // Menampilkan form edit admin
     public function editAdmin($id)
     {
-        // Cari user di database berdasarkan ID yang diklik dari tabel
-        // Jika ID tidak ditemukan, akan otomatis memunculkan error 404
         $admin = User::findOrFail($id);
-
-        // Kirim data admin asli ke view edit
         return view('admin.users.admin_edit', compact('admin'));
     }
-    // Memproses pembaruan data admin
     public function updateAdmin(Request $request, $id)
     {
-        // 1. Validasi Input
+        // Validasi Input
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id, // Pastikan email unik kecuali untuk user ini sendiri
             'new_password' => 'nullable|min:8',
         ]);
 
-        // 2. Ambil data asli dari Database
+        // Ambil data asli dari Database
         $admin = User::findOrFail($id);
 
-        // 3. Update Name dan Email
+        // Update Name dan Email
         $admin->name = $request->name;
         $admin->email = $request->email;
 
-        // 4. Logika Update Password (Hanya jika diisi)
+        // Logika Update Password (Hanya jika diisi)
         if ($request->filled('new_password')) {
             $admin->password = Hash::make($request->new_password);
         }
-
-        // 5. SIMPAN KE DATABASE (Langkah paling penting!)
+        // Simpan perubahan ke database
         $admin->save();
 
-        // 6. Redirect kembali ke tabel dengan pesan sukses
         return redirect()->route('admin.users.admin')->with('success', 'Account updated successfully!');
     }
     public function destroyAdmin($id)
@@ -177,7 +166,6 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Aturan: 4 karakter awal email + ID (sebagai pengganti nomor kolom agar konsisten)
         $emailPrefix = substr($user->email, 0, 4);
         $newPassword = $emailPrefix . $user->id;
 
@@ -186,7 +174,6 @@ class UserController extends Controller
             'password' => Hash::make($newPassword)
         ]);
 
-        // Kembali ke halaman dengan pesan sukses yang menyertakan password baru
         return redirect()->back()->with('success', "Password for {$user->name} has been reset to: <strong>{$newPassword}</strong>");
     }
 }

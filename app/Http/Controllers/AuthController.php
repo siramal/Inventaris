@@ -9,7 +9,7 @@ class AuthController extends Controller
 {
     public function auth(Request $request)
     {
-        // 1. Validasi Input
+        //Validasi Input
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -18,13 +18,12 @@ class AuthController extends Controller
             'password.required' => 'Password harus diisi.',
         ]);
 
-        // 2. Proses Login
+        // Proses Login
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
             $user = Auth::user();
 
-            // Gunakan rute yang sudah kita beri nama di web.php
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
             } elseif ($user->role === 'operator') {
@@ -34,7 +33,7 @@ class AuthController extends Controller
             return redirect('/');
         }
 
-        // 3. Jika Gagal Login
+        // Jika Gagal Login
         return back()->withErrors([
             'loginError' => 'Gagal login, silahkan cek email dan password Anda!',
         ])->withInput();

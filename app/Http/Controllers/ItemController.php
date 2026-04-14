@@ -10,31 +10,28 @@ use Illuminate\Support\Facades\Auth;
 
 class ItemController extends Controller
 {
-    /**
-     * Menampilkan tabel items untuk Admin dan Operator
-     */
     public function index()
     {
-        // 1. Ambil data dasar dengan kategori
+        // Ambil data dasar dengan kategori
         $query = Item::with('category');
 
-        // 2. Jika login sebagai Admin: Hitung jumlah peminjaman (count)
+        // Jika login sebagai Admin: Hitung jumlah peminjaman (count)
         if (Auth::user()->role === 'admin') {
             $items = $query->withCount('lendings')->latest()->get();
-        } 
-        // 3. Jika login sebagai Operator: Hitung total barang yang sedang dipinjam (sum total)
+        }
+        // Jika login sebagai Operator: Hitung total barang yang sedang dipinjam (sum total)
         else {
-            $items = $query->withCount(['lendings as total_dipinjam' => function ($query) {
-                $query->whereNull('returned_at')->select(DB::raw('sum(total)'));
-            }])->get();
+            $items = $query->withCount([
+                'lendings as total_dipinjam' => function ($query) {
+                    $query->whereNull('returned_at')->select(DB::raw('sum(total)'));
+                }
+            ])->get();
         }
 
         // Return ke file view gabungan yang sama
         return view('items.index', compact('items'));
     }
 
-    // --- Fungsi lainnya (createItem, storeItem, editItem, updateItem) tetap sama ---
-    
     public function createItem()
     {
         $categories = Category::all();
@@ -87,9 +84,15 @@ class ItemController extends Controller
 
         return redirect()->route('admin.items')->with('success', 'Item berhasil diperbarui!');
     }
-
     public function showLending($id)
     {
-        return view('items.lending_detail', ['id' => $id]);
+        $item = Item::with([
+            'lendings' => function ($query) {
+                $query->latest(); 
+            },
+            'lendings.user'
+        ])->findOrFail($id);
+
+        return view('items.lending_detail', compact('item'));
     }
 }

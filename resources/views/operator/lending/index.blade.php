@@ -4,7 +4,6 @@
 @section('content')
     <div class="bg-white rounded-md shadow-md p-8">
 
-        {{-- Alert Success --}}
         @if (session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
                 {{ session('success') }}
@@ -48,22 +47,19 @@
                 @forelse($lendings as $lending)
                     <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
                         <td class="py-5 px-6">{{ $loop->iteration }}</td>
-                        <td class="py-5 px-6">{{ $lending->item->name }}</td>
+                        <td class="py-5 px-6">{{ $lending->item?->name ?? 'Item Terhapus' }}</td>
                         <td class="py-5 px-6">{{ $lending->total }}</td>
                         <td class="py-5 px-6">{{ $lending->name }}</td>
                         <td class="py-5 px-6">{{ $lending->notes }}</td>
                         <td class="py-5 px-6">{{ $lending->date->format('d F, Y') }}</td>
 
-                        {{-- KOLOM RETURNED: Menampilkan Badge --}}
                         <td class="py-5 px-6">
                             @if ($lending->returned_at)
-                                {{-- Badge Hijau jika sudah kembali --}}
                                 <span
                                     class="inline-block border border-emerald-400 text-emerald-500 px-4 py-1 rounded text-sm font-medium">
                                     {{ $lending->returned_at->format('d F, Y') }}
                                 </span>
                             @else
-                                {{-- Badge Kuning jika belum kembali --}}
                                 <span
                                     class="inline-block border border-yellow-400 text-yellow-500 px-4 py-1 rounded text-sm italic">
                                     not returned
@@ -74,11 +70,8 @@
                         <td class="py-5 px-6 font-bold text-[#050A30] text-center">
                             {{ $lending->user->name }}
                         </td>
-
-                        {{-- KOLOM ACTION: Menghilangkan Tombol Returned --}}
                         <td class="py-5 px-6">
                             <div class="flex justify-center gap-2">
-                                {{-- Tombol Returned HANYA muncul jika returned_at masih NULL --}}
                                 @if (!$lending->returned_at)
                                     <form action="{{ route('operator.lending.returned', $lending->id) }}" method="POST">
                                         @csrf
@@ -89,8 +82,6 @@
                                         </button>
                                     </form>
                                 @endif
-
-                                {{-- Tombol Delete selalu muncul --}}
                                 <form action="{{ route('operator.lending.destroy', $lending->id) }}" method="POST"
                                     onsubmit="return confirm('Delete this record?')">
                                     @csrf

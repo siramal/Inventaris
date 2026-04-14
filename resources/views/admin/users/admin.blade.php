@@ -16,15 +16,12 @@
                 <h2 class="text-xl font-bold text-[#050A30]">Admin Accounts Table</h2>
                 <p class="text-gray-500 text-sm mt-1">Add, delete, update <span class="text-pink-500">.admin-accounts</span>
                 </p>
-                <p class="text-gray-400 text-xs mt-1"><span class="text-pink-400">p.s password</span> 4 character of email and
+                <p class="text-gray-400 text-xs mt-1"><span class="text-pink-400">p.s password</span> 4 character of email
+                    and
                     nomor.</p>
             </div>
 
             <div class="flex gap-3">
-                <a href="{{ route('admin.users.admin.export') }}"
-                    class="bg-[#6f42c1] hover:bg-[#59339e] text-white font-medium py-2 px-6 rounded transition">
-                    Export Excel
-                </a>
 
                 <a href="{{ route('admin.users.admin.create') }}"
                     class="bg-[#20c997] hover:bg-[#1ba87e] text-white font-medium py-2 px-6 rounded transition flex items-center gap-2">
