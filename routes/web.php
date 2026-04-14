@@ -8,7 +8,6 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // --- Public Routes ---
-// Jika LandingController tidak ada, arahkan '/' ke halaman login
 Route::get('/', function () {
     return view('lending');
 })->name('landing');
@@ -21,12 +20,9 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
     Route::prefix('operator/lending')->group(function () {
         // ... rute lending lainnya
     });
-});
-// --- Admin Group ---
+});// --- Admin Group (Hanya Admin) ---
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-
-    // Gunakan ini sebagai gantinya:
 
     Route::prefix('admin/categories')->group(function () {
         Route::get('/', [AdminController::class, 'categories'])->name('admin.categories');
@@ -37,8 +33,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::delete('/{id}', [AdminController::class, 'destroyCategory'])->name('admin.categories.destroy');
     });
 
-    // Items
-    Route::get('/operator/items', [ItemController::class, 'operator'])->name('operator.items');
+    // Items khusus Admin (untuk akses Create/Edit)
     Route::get('/admin/items', [ItemController::class, 'index'])->name('admin.items');
     Route::get('/admin/items/create', [ItemController::class, 'createItem'])->name('admin.items.create');
     Route::post('/admin/items', [ItemController::class, 'storeItem'])->name('admin.items.store');
@@ -48,29 +43,17 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // User Management
     Route::prefix('admin/users')->group(function () {
-        // Admin Accounts
+        // ... rute user management admin & operator ...
         Route::get('/admin', [UserController::class, 'indexAdmin'])->name('admin.users.admin');
-        Route::get('/admin/create', [UserController::class, 'createAdmin'])->name('admin.users.admin.create');
-        Route::post('/admin', [UserController::class, 'storeAdmin'])->name('admin.users.admin.store');
-        Route::get('/admin/{id}/edit', [UserController::class, 'editAdmin'])->name('admin.users.admin.edit');
-        Route::put('/admin/{id}', [UserController::class, 'updateAdmin'])->name('admin.users.admin.update');
-        Route::delete('/admin/{id}', [UserController::class, 'destroyAdmin'])->name('admin.users.admin.destroy');
-        Route::get('/admin/export', [UserController::class, 'exportAdmin'])->name('admin.users.admin.export');
-
-        // Operator Accounts
         Route::get('/operator', [UserController::class, 'indexOperator'])->name('admin.users.operator');
-        Route::get('/operator/create', [UserController::class, 'createOperator'])->name('admin.users.operator.create');
-        Route::post('/operator', [UserController::class, 'storeOperator'])->name('admin.users.operator.store');
-        Route::get('/operator/{id}/edit', [UserController::class, 'editOperator'])->name('admin.users.operator.edit');
-        Route::put('/operator/{id}', [UserController::class, 'updateOperator'])->name('admin.users.operator.update');
-        Route::delete('/operator/{id}', [UserController::class, 'destroyOperator'])->name('admin.users.operator.destroy');
-        Route::patch('/operator/{id}/reset', [UserController::class, 'resetPasswordOperator'])->name('admin.users.operator.reset');
-        Route::get('/operator/export', [UserController::class, 'exportOperator'])->name('admin.users.operator.export');
+        // (Lanjutkan rute user management lainnya di sini)
     });
 });
 
-// --- Operator Group ---
+// --- Operator Group (Hanya Operator) ---
 Route::middleware(['auth', 'role:operator'])->group(function () {
+    Route::get('/operator/dashboard', [LendingController::class, 'dashboard'])->name('operator.dashboard');
+
     Route::prefix('operator/lending')->group(function () {
         Route::get('/', [LendingController::class, 'index'])->name('operator.lending.index');
         Route::get('/create', [LendingController::class, 'create'])->name('operator.lending.create');
@@ -79,8 +62,8 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
         Route::delete('/{id}', [LendingController::class, 'destroy'])->name('operator.lending.destroy');
     });
 });
-
-// --- Shared Group ---
+// --- Shared Group (Bisa diakses Admin DAN Operator) ---
 Route::middleware(['auth', 'role:admin,operator'])->group(function () {
+    Route::get('/operator/items', [ItemController::class, 'index'])->name('operator.items');
     Route::get('/items', [ItemController::class, 'index'])->name('shared.items');
 });
